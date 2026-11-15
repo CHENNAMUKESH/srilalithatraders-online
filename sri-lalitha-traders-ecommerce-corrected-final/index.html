@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SRI LALITHA TRADERS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="brand" onclick="showPage('shop')">
+    SRI LALITHA <span>TRADERS</span>
+  </div>
+
+  <input
+    id="search"
+    placeholder="Search pumps, motors, PVC, wires..."
+    oninput="renderProducts()"
+  >
+
+  <button id="languageButton" onclick="toggleLanguage()">
+    తెలుగు / EN
+  </button>
+
+  <button id="cartButton" onclick="showCart()">
+    🛒 <span id="cartCount">0</span>
+  </button>
+
+  <button id="ownerLoginButton" onclick="showLogin()">
+    Owner Login
+  </button>
+
+  <button
+    id="ownerDashboardButton"
+    class="hidden"
+    onclick="showPage('admin')"
+  >
+    Owner Dashboard
+  </button>
+
+  <button
+    id="ownerLogoutButton"
+    class="hidden"
+    onclick="logout()"
+  >
+    Logout
+  </button>
+</header>
+
+
+<main>
+
+<!-- ================= SHOP PAGE ================= -->
+
+<section id="shopPage">
+
+  <div class="hero">
+
+    <h1
+      data-en="Everything for Pumps, Motors & Plumbing"
+      data-te="పంపులు, మోటార్లు మరియు ప్లంబింగ్‌కు కావలసినవి అన్నీ"
+    >
+      Everything for Pumps, Motors & Plumbing
+    </h1>
+
+    <p
+      data-en="Quality products • Local delivery • Store pickup"
+      data-te="నాణ్యమైన ఉత్పత్తులు • స్థానిక డెలివరీ • స్టోర్ పికప్"
+    >
+      Quality products • Local delivery • Store pickup
+    </p>
+
+    <button
+      class="primary"
+      onclick="document.getElementById('products').scrollIntoView()"
+    >
+      Shop Now
+    </button>
+
+  </div>
+
+
+  <!-- DELIVERY LOCATION -->
+
+  <section class="delivery">
+
+    <h3>📍 Delivery Availability</h3>
+
+    <select
+      id="locationSelect"
+      onchange="updateLocationInfo()"
+    ></select>
+
+    <span id="locationInfo"></span>
+
+  </section>
+
+
+  <!-- CATEGORIES -->
+
+  <div id="categories" class="categories"></div>
+
+
+  <!-- PRODUCTS -->
+
+  <div id="products" class="products"></div>
+
+</section>
+
+
+
+<!-- ================= CART PAGE ================= -->
+
+<section id="cartPage" class="hidden">
+
+  <button onclick="showPage('shop')">
+    ← Continue Shopping
+  </button>
+
+  <h2>Your Cart</h2>
+
+  <div id="cartItems"></div>
+
+  <div class="checkout-box">
+
+    <h3 id="cartTotal">
+      Total: ₹0
+    </h3>
+
+    <button
+      class="primary"
+      onclick="showCheckout()"
+    >
+      Proceed to Checkout
+    </button>
+
+  </div>
+
+</section>
+
+
+
+<!-- ================= CHECKOUT PAGE ================= -->
+
+<section id="checkoutPage" class="hidden">
+
+  <button onclick="showCart()">
+    ← Back to Cart
+  </button>
+
+  <h2>Checkout</h2>
+
+  <div class="form">
+
+    <input
+      id="customerName"
+      placeholder="Full Name"
+    >
+
+    <input
+      id="phone"
+      placeholder="Mobile Number"
+    >
+
+    <textarea
+      id="address"
+      placeholder="Delivery Address"
+    ></textarea>
+
+
+    <!-- CURRENT LOCATION -->
+
+    <div class="location-box">
+
+      <button
+        type="button"
+        onclick="getCurrentLocation()"
+        class="primary"
+      >
+        📍 Get My Current Location
+      </button>
+
+      <p
+        id="currentLocationStatus"
+        class="small"
+      >
+        Share your current location for accurate delivery.
+      </p>
+
+      <div
+        id="locationPreview"
+        class="small"
+      ></div>
+
+    </div>
+
+
+    <!-- DELIVERY TYPE -->
+
+    <select
+      id="deliveryType"
+      onchange="renderCheckout()"
+    >
+      <option value="delivery">
+        Home Delivery
+      </option>
+
+      <option value="pickup">
+        Store Pickup (Free)
+      </option>
+    </select>
+
+
+    <!-- PAYMENT -->
+
+    <select id="paymentMethod">
+
+      <option value="UPI">
+        UPI
+      </option>
+
+      <option value="COD">
+        Cash on Delivery
+      </option>
+
+    </select>
+
+
+    <div id="checkoutSummary"></div>
+
+
+    <button
+      class="primary"
+      onclick="placeOrder()"
+    >
+      Place Order
+    </button>
+
+  </div>
+
+</section>
+
+
+
+<!-- ================= OWNER DASHBOARD ================= -->
+
+<section id="adminPage" class="hidden">
+
+  <div class="admin-head">
+
+    <h2>
+      Owner Dashboard – SRI LALITHA TRADERS
+    </h2>
+
+    <div>
+
+      <button onclick="adminTab('settingsAdmin')">
+        ⚙️ Settings
+      </button>
+
+      <button onclick="logout()">
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ADMIN TABS -->
+
+  <div class="tabs">
+
+    <button onclick="adminTab('productsAdmin')">
+      Products
+    </button>
+
+    <button onclick="adminTab('locationsAdmin')">
+      Locations
+    </button>
+
+    <button onclick="adminTab('ordersAdmin')">
+      Orders
+    </button>
+
+    <button onclick="adminTab('settingsAdmin')">
+      ⚙️ Settings
+    </button>
+
+  </div>
+
+
+
+  <!-- ================= PRODUCTS ================= -->
+
+  <div
+    id="productsAdmin"
+    class="admin-tab"
+  >
+
+    <h3>Add / Edit Products</h3>
+
+    <div class="form grid">
+
+      <input
+        id="pName"
+        placeholder="Product Name"
+      >
+
+      <select id="pCategory">
+
+        <option>Pumps & Motors</option>
+        <option>PVC</option>
+        <option>HDPE</option>
+        <option>CPVC</option>
+        <option>SWR</option>
+        <option>Wires</option>
+
+      </select>
+
+      <input
+        id="pPrice"
+        type="number"
+        placeholder="Price"
+      >
+
+      <input
+        id="pStock"
+        type="number"
+        placeholder="Stock"
+      >
+
+      <input
+        id="pImage"
+        placeholder="Image URL (optional)"
+      >
+
+      <button
+        class="primary"
+        onclick="addProduct()"
+      >
+        Add Product
+      </button>
+
+    </div>
+
+    <div id="adminProducts"></div>
+
+  </div>
+
+
+
+  <!-- ================= LOCATIONS ================= -->
+
+  <div
+    id="locationsAdmin"
+    class="admin-tab hidden"
+  >
+
+    <h3>Delivery Locations & Charges</h3>
+
+    <div class="form grid">
+
+      <input
+        id="locName"
+        placeholder="Location Name"
+      >
+
+      <input
+        id="locCharge"
+        type="number"
+        placeholder="Delivery Charge"
+      >
+
+      <button
+        class="primary"
+        onclick="addLocation()"
+      >
+        Add Location
+      </button>
+
+    </div>
+
+    <div id="adminLocations"></div>
+
+  </div>
+
+
+
+  <!-- ================= ORDERS ================= -->
+
+  <div
+    id="ordersAdmin"
+    class="admin-tab hidden"
+  >
+
+    <h3>Customer Orders</h3>
+
+    <div id="adminOrders"></div>
+
+  </div>
+
+
+
+  <!-- ================= SETTINGS ================= -->
+
+  <div
+    id="settingsAdmin"
+    class="admin-tab hidden"
+  >
+
+    <h2>⚙️ Owner Settings</h2>
+
+
+    <!-- WHATSAPP -->
+
+    <div class="settings-card">
+
+      <h3>📱 Owner WhatsApp Notifications</h3>
+
+      <p>
+        Enter the WhatsApp number where you want to receive every new customer order.
+      </p>
+
+      <input
+        id="ownerWhatsappNumber"
+        type="tel"
+        placeholder="Example: 919876543210"
+      >
+
+      <button
+        class="primary"
+        onclick="saveOwnerWhatsappNumber()"
+      >
+        Save WhatsApp Number
+      </button>
+
+      <p
+        id="whatsappSaveStatus"
+        class="small"
+      ></p>
+
+    </div>
+
+
+    <!-- SUPABASE OWNER LOGIN INFORMATION -->
+
+    <div class="settings-card">
+
+      <h3>🔐 Owner Login</h3>
+
+      <p>
+        Your Owner Login is securely managed using Supabase Authentication.
+      </p>
+
+      <p class="small">
+        To change your password, use the secure Supabase password recovery/change process.
+        Your password is never displayed inside this website.
+      </p>
+
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="settings-card">
+
+      <h3>🔔 Notifications</h3>
+
+      <p>
+        New customer order → WhatsApp message prepared for owner.
+      </p>
+
+      <p>
+        Order Confirmed / Picked Up → WhatsApp message prepared for customer.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- ================= OWNER LOGIN MODAL ================= -->
+
+<div
+  id="loginModal"
+  class="modal hidden"
+>
+
+  <div class="modal-content">
+
+    <button
+      class="close"
+      onclick="closeLogin()"
+    >
+      ×
+    </button>
+
+
+    <h2>Owner Login</h2>
+
+
+    <!-- CHANGED: USERNAME → EMAIL -->
+
+    <input
+      id="username"
+      type="email"
+      placeholder="Owner Email"
+      autocomplete="email"
+    >
+
+
+    <!-- PASSWORD -->
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
+
+
+    <button
+      class="primary"
+      onclick="login()"
+    >
+      Login
+    </button>
+
+
+    <p class="small">
+      Enter your Owner Email and Password.
+    </p>
+
+  </div>
+
+</div>
+
+
+
+<!-- ================= TOAST MESSAGE ================= -->
+
+<div id="toast"></div>
+
+</main>
+
+
+<!-- ================= SUPABASE ================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase-config.js"></script>
+
+<script src="supabase-sync.js"></script>
+
+<script src="app.js"></script>
+
+
+</body>
+</html>
